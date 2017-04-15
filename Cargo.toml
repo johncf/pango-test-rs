@@ -1,0 +1,13 @@
+[package]
+name = "text-render"
+version = "0.1.0"
+authors = ["johncf <johncf@protonmail.com>"]
+
+[dependencies]
+pango = "0.1"
+cairo-rs = "0.1"
+pangocairo = "0.1"
+
+[dependencies.gtk]
+version = "0.1"
+features = ["v3_16"]
