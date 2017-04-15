@@ -7,7 +7,4 @@ authors = ["johncf <johncf@protonmail.com>"]
 pango = "0.1"
 cairo-rs = "0.1"
 pangocairo = "0.1"
-
-[dependencies.gtk]
-version = "0.1"
-features = ["v3_16"]
+gtk = "0.1"
