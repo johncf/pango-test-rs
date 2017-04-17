@@ -1,14 +1,14 @@
-extern crate gtk;
 extern crate cairo;
 extern crate pango;
 extern crate pangocairo;
+extern crate gtk;
 
 use std::f64::consts::PI;
 
+use cairo::Context;
 use gtk::prelude::*;
 use gtk::DrawingArea;
-
-use cairo::Context;
+use pangocairo::CairoContextExt;
 
 fn main() {
     if gtk::init().is_err() {
@@ -19,7 +19,7 @@ fn main() {
     drawable(500, 500, |_, cr| {
         let font = pango::FontDescription::from_string("Sans Bold 27");
 
-        let layout = pangocairo::create_layout(cr);
+        let layout = cr.create_pango_layout();
         layout.set_text("Hello", 5);
         layout.set_font_description(Some(&font));
 
@@ -39,11 +39,11 @@ fn main() {
             cr.rotate(angle * PI / 180.);
 
             /* Inform Pango to re-layout the text with the new transformation */
-            pangocairo::update_layout(cr, &layout);
+            cr.update_pango_layout(&layout);
 
             let (width, _) = layout.get_size();
             cr.move_to(- (width as f64 / pango::SCALE as f64) / 2., - radius);
-            pangocairo::show_layout(cr, &layout);
+            cr.show_pango_layout(&layout);
 
             cr.restore();
         }
@@ -58,11 +58,9 @@ pub fn drawable<F>(width: i32, height: i32, draw_fn: F)
 where F: Fn(&DrawingArea, &Context) -> Inhibit + 'static {
     let window = gtk::Window::new(gtk::WindowType::Toplevel);
     let drawing_area = Box::new(DrawingArea::new)();
-
     drawing_area.connect_draw(draw_fn);
 
     window.set_default_size(width, height);
-
     window.connect_delete_event(|_, _| {
         gtk::main_quit();
         Inhibit(false)

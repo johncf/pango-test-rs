@@ -3,8 +3,18 @@ name = "text-render"
 version = "0.1.0"
 authors = ["johncf <johncf@protonmail.com>"]
 
-[dependencies]
-pango = "0.1"
-cairo-rs = "0.1"
-pangocairo = "0.1"
-gtk = "0.1"
+[dependencies.pangocairo]
+git = "https://github.com/razrfalcon/pangocairo-rs"
+version = "0.1.1"
+
+[dependencies.pango]
+git = "https://github.com/gtk-rs/pango"
+version = "0.1.1"
+
+[dependencies.cairo-rs]
+git = "https://github.com/gtk-rs/cairo"
+version = "0.1.1"
+
+[dependencies.gtk]
+git = "https://github.com/gtk-rs/gtk"
+version = "0.1.1"
