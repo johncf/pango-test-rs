@@ -4,8 +4,10 @@ version = "0.1.0"
 dependencies = [
  "cairo-rs 0.1.1 (git+https://github.com/gtk-rs/cairo)",
  "gdk 0.5.1 (git+https://github.com/gtk-rs/gdk)",
+ "glib 0.1.1 (git+https://github.com/gtk-rs/glib)",
  "gtk 0.1.1 (git+https://github.com/gtk-rs/gtk)",
  "pango 0.1.1 (git+https://github.com/gtk-rs/pango)",
+ "pango-sys 0.3.2 (git+https://github.com/gtk-rs/sys)",
  "pangocairo 0.1.1 (git+https://github.com/razrfalcon/pangocairo-rs)",
 ]
 

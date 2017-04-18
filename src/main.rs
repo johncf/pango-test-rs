@@ -1,8 +1,11 @@
 extern crate cairo;
 extern crate pango;
 extern crate pangocairo;
+extern crate pango_sys as pffi;
 extern crate gtk;
 extern crate gdk;
+
+extern crate glib;
 
 use std::cell::RefCell;
 
@@ -16,11 +19,29 @@ struct Point {
     y: f64,
 }
 
+fn my_xy_to_index(layout: &pango::Layout, x: i32, y: i32) -> (bool, i32, i32) {
+    use glib::translate::*;
+    unsafe {
+        let mut index_ = std::mem::uninitialized();
+        let mut trailing = std::mem::uninitialized();
+        let ret = from_glib(pffi::pango_layout_xy_to_index(layout.to_glib_none().0, x, y, &mut index_, &mut trailing));
+        (ret, index_, trailing)
+    }
+}
+
 const TEXT: &'static str = "Hello, World!\nThis is the end!";
 
 thread_local!(
-    static GLOBAL: RefCell<Option<Point>> = RefCell::new(None)
+    static GLOBAL: RefCell<Option<Point>> = RefCell::new(None);
 );
+
+fn p2c(x: i32) -> f64 {
+    x as f64 / pango::SCALE as f64
+}
+
+fn c2p(x: f64) -> i32 {
+    (x * pango::SCALE as f64) as i32
+}
 
 fn draw(darea: &DrawingArea, cr: &Context) -> Inhibit {
     let font = pango::FontDescription::from_string("Sans Bold 27");
@@ -29,21 +50,26 @@ fn draw(darea: &DrawingArea, cr: &Context) -> Inhibit {
     layout.set_text(TEXT, TEXT.len() as i32);
     layout.set_font_description(Some(&font));
     let (w_p, h_p) = layout.get_size();
-    let (w_c, h_c) = (w_p as f64 / pango::SCALE as f64, h_p as f64 / pango::SCALE as f64);
+    let (w_c, h_c) = (p2c(w_p), p2c(h_p));
     let w_win = darea.get_allocated_width() as f64;
     let h_win = darea.get_allocated_height() as f64;
-    let mut c_x = (w_win - w_c)/2.;
-    let mut c_y = (h_win - h_c)/2.;
-
-    GLOBAL.with(|global| {
-        if let Some(Point { x, y }) = global.borrow_mut().take() {
-            c_x = x;
-            c_y = y;
-        }
-    });
+    let c_x = (w_win - w_c)/2.;
+    let c_y = (h_win - h_c)/2.;
 
     cr.move_to(c_x, c_y);
     cr.set_source_rgb(0., 0., 0.);
+    cr.update_pango_layout(&layout);
+
+    // Handle mouse
+    GLOBAL.with(|global| {
+        if let Some(Point { x, y }) = global.borrow_mut().take() {
+            let m_x = c2p(x - c_x);
+            let m_y = c2p(y - c_y);
+            let (inside, index, trailing) = my_xy_to_index(&layout, m_x, m_y);
+            println!("{}, {}i, {}t", inside, index, trailing);
+        }
+    });
+
     cr.show_pango_layout(&layout);
 
     Inhibit(false)
