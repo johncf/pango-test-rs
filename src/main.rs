@@ -1,11 +1,8 @@
 extern crate cairo;
+extern crate gdk;
+extern crate gtk;
 extern crate pango;
 extern crate pangocairo;
-extern crate pango_sys as pffi;
-extern crate gtk;
-extern crate gdk;
-
-extern crate glib;
 
 use std::cell::RefCell;
 
@@ -17,16 +14,6 @@ use pangocairo::CairoContextExt;
 struct Point {
     x: f64,
     y: f64,
-}
-
-fn my_xy_to_index(layout: &pango::Layout, x: i32, y: i32) -> (bool, i32, i32) {
-    use glib::translate::*;
-    unsafe {
-        let mut index_ = std::mem::uninitialized();
-        let mut trailing = std::mem::uninitialized();
-        let ret = from_glib(pffi::pango_layout_xy_to_index(layout.to_glib_none().0, x, y, &mut index_, &mut trailing));
-        (ret, index_, trailing)
-    }
 }
 
 const TEXT: &'static str = "Hello, World!\nThis is the end!";
@@ -65,7 +52,7 @@ fn draw(darea: &DrawingArea, cr: &Context) -> Inhibit {
         if let Some(Point { x, y }) = global.borrow_mut().take() {
             let m_x = c2p(x - c_x);
             let m_y = c2p(y - c_y);
-            let (inside, index, trailing) = my_xy_to_index(&layout, m_x, m_y);
+            let (inside, index, trailing) = layout.xy_to_index(m_x, m_y);
             println!("{}, {}i, {}t", inside, index, trailing);
         }
     });

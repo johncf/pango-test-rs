@@ -4,10 +4,8 @@ version = "0.1.0"
 dependencies = [
  "cairo-rs 0.1.1 (git+https://github.com/gtk-rs/cairo)",
  "gdk 0.5.1 (git+https://github.com/gtk-rs/gdk)",
- "glib 0.1.1 (git+https://github.com/gtk-rs/glib)",
  "gtk 0.1.1 (git+https://github.com/gtk-rs/gtk)",
  "pango 0.1.1 (git+https://github.com/gtk-rs/pango)",
- "pango-sys 0.3.2 (git+https://github.com/gtk-rs/sys)",
  "pangocairo 0.1.1 (git+https://github.com/razrfalcon/pangocairo-rs)",
 ]
 
@@ -228,7 +226,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "pango"
 version = "0.1.1"
-source = "git+https://github.com/gtk-rs/pango#b1993b0243154683f1175993c2486312070d444b"
+source = "git+https://github.com/gtk-rs/pango#64420b152d26591a51a6a724495932d9452e41b8"
 dependencies = [
  "bitflags 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "glib 0.1.1 (git+https://github.com/gtk-rs/glib)",

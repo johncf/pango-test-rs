@@ -22,13 +22,3 @@ version = "0.5.1"
 [dependencies.gtk]
 git = "https://github.com/gtk-rs/gtk"
 version = "0.1.1"
-
-# end standard dependencies
-
-[dependencies.glib]
-git = "https://github.com/gtk-rs/glib"
-version = "0.1.1"
-
-[dependencies.pango-sys]
-git = "https://github.com/gtk-rs/sys"
-version = "0.3.2"
