@@ -16,7 +16,7 @@ struct Point {
     y: f64,
 }
 
-const TEXT: &'static str = "Hello, World!\nThis is the end!";
+const TEXT: &'static [u8] = b"Hello, World!\nThis is the end!";
 
 thread_local!(
     static GLOBAL: RefCell<Option<Point>> = RefCell::new(None);
@@ -34,7 +34,8 @@ fn draw(darea: &DrawingArea, cr: &Context) -> Inhibit {
     let font = pango::FontDescription::from_string("Sans Bold 27");
 
     let layout = cr.create_pango_layout();
-    layout.set_text(TEXT, TEXT.len() as i32);
+    let text = String::from_utf8_lossy(TEXT);
+    layout.set_text(text.as_ref(), text.len() as i32);
     layout.set_font_description(Some(&font));
     let (w_p, h_p) = layout.get_size();
     let (w_c, h_c) = (p2c(w_p), p2c(h_p));
@@ -47,6 +48,8 @@ fn draw(darea: &DrawingArea, cr: &Context) -> Inhibit {
     cr.set_source_rgb(0., 0., 0.);
     cr.update_pango_layout(&layout);
 
+    let mut rect = None;
+
     // Handle mouse
     GLOBAL.with(|global| {
         if let Some(Point { x, y }) = global.borrow_mut().take() {
@@ -54,10 +57,17 @@ fn draw(darea: &DrawingArea, cr: &Context) -> Inhibit {
             let m_y = c2p(y - c_y);
             let (inside, index, trailing) = layout.xy_to_index(m_x, m_y);
             println!("{}, {}i, {}t", inside, index, trailing);
+            rect = Some(layout.index_to_pos(index));
         }
     });
 
     cr.show_pango_layout(&layout);
+
+    if let Some(pango::Rectangle { x, y, width, height }) = rect {
+        cr.rectangle(p2c(x) + c_x, p2c(y) + c_y, p2c(width), p2c(height));
+        cr.set_line_width(1.0);
+        cr.stroke();
+    }
 
     Inhibit(false)
 }
