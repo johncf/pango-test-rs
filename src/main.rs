@@ -113,7 +113,7 @@ fn main() {
 pub fn drawable_window<F>(width: i32, height: i32, draw_fn: F)
 where F: Fn(&DrawingArea, &Context) -> Inhibit + 'static {
     let window = gtk::Window::new(gtk::WindowType::Toplevel);
-    let drawing_area = Box::new(DrawingArea::new)();
+    let drawing_area = DrawingArea::new();
     drawing_area.connect_draw(draw_fn);
     drawing_area.add_events(gdk::BUTTON_PRESS_MASK.bits() as i32);
     drawing_area.connect_button_press_event(|darea, ev| {
